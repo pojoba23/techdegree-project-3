@@ -1,6 +1,8 @@
 //Global Variables
+    //Design Menu
+const design_select = document.getElementById("design");
+const color_menu = document.getElementById("color");
     //Activities Variables
-
 const activities = document.querySelector('.activities');
 const total = document.createElement('label');
     //Payment Variables
@@ -18,6 +20,154 @@ const cvv_field = document.getElementById("cvv");
   //Register Button Variables
 const register_button = document.querySelector("form");
 const activities_message = document.createElement("span");
+
+/*These target the payment form. It forces the credit card option to be selected by default and hides the Paypal
+and Bitcoin messages.*/
+document.querySelectorAll("#payment option").selected=true;
+document.querySelectorAll("#paypal").hidden=true;
+document.querySelectorAll("#bitcoin").hidden=true;
+
+
+//Sets focus to the first text field once the webpage is open
+
+const focus= () =>{
+  document.getElementById("name").focus()
+}
+focus()
+
+//Hides a input field unless the "Other" option is selected, allowing user to type in their info
+
+document.getElementById("other-title").hidden = true;
+const job_role = document.getElementById("title");
+job_role.addEventListener("change", (e) => {
+    const other = document.querySelectorAll("#title option")[5];
+    const job_title = document.getElementById("other-title");
+    if(event.target.value === other.value){
+        job_title.hidden = false;
+    } else {
+        job_title.hidden = "true";
+    }
+});
+
+//Hide the "Select Theme" option
+document.getElementById("design").firstElementChild.hidden = true;
+
+const color_select = () => {
+  const select_element = document.querySelector("#color");
+  const option = document.createElement("option");
+  const location = select_element.firstElementChild;
+  option.innerHTML = "Please select a T-Shirt theme";
+  select_element.insertBefore(option, location);
+  option.selected = true;
+  document.getElementById("color").firstElementChild.hidden = true;
+}
+color_select();
+
+//This function hides the color menu and appends a message in its place. 
+
+const colorMenu_hide = () => {
+  const color_menu = document.getElementById("color");
+  const menu_message = document.createElement("p")
+  const location = color_menu.parentElement;
+  location.appendChild(menu_message)
+  menu_message.innerHTML = "Please select a shirt design";
+  color_menu.style.display = "none";
+}
+colorMenu_hide();
+
+/*Creates an Event Listener on the Design menu. Selecting the theme 'JS Puns'
+option, only shows the JS Puns color options in the Color drop down menu. Selecting 
+the 'I heart JS' theme, only shows the I Heart color options*/
+
+for(let j = 1; j < color_menu.length; j++){
+  color_menu[j].style.display = "none";
+}
+
+design_select.addEventListener("change", (e) => {
+  const shirt_options = document.querySelectorAll("#color option");
+  const js_puns = document.querySelectorAll("#design option")[1];
+  const i_heart = document.querySelectorAll("#design option")[2];
+  for(let i = 1; i < shirt_options.length; i++){
+      shirt_options[i].style.display = "none";
+      if(e.target.value === js_puns.value){
+          shirt_options[1].selected = true;
+          shirt_options[1].style.display = "block";
+          shirt_options[2].style.display = "block";
+          shirt_options[3].style.display = "block";
+      } else if(e.target.value === i_heart.value){
+          shirt_options[4].selected = true;
+          shirt_options[4].style.display = "block";
+          shirt_options[5].style.display = "block";
+          shirt_options[6].style.display = "block";
+      }
+  }
+  if(e.target.value && color_menu.nextElementSibling){
+      color_menu.style.display = "inherit";
+      color_menu.nextElementSibling.remove();
+  }
+});
+
+/*The Event Listener for the 'Activities' section. This listens for the activities chosen,
+adds the total of those event and displays them at the bottom of the section. Then compares
+the Dates and Times of the events chosen and disables any conflicting events with the same Date and Time.*/
+
+let total_cost = 0;
+
+activities.addEventListener('change', (e) => {
+  const is_checked = e.target.checked;
+  const cost = parseInt(e.target.getAttribute("data-cost"));
+  const act_inputs = document.querySelectorAll(".activities input");
+  const selected = e.target.getAttribute("data-day-and-time");
+  activities.appendChild(total);
+  if(is_checked){
+      total_cost += cost;
+      total.innerHTML = "Total= $ " + total_cost;
+  } else {
+      total_cost -= cost;
+      total.innerHTML = "Total= $ " + total_cost;
+  }
+  if(total_cost === 0){
+      total.style.display = "none";
+  } else {
+      total.style.display = "block";
+  }
+  for(let i = 0; i < act_inputs.length; i++){
+      const calender = act_inputs[i].getAttribute("data-day-and-time");
+      if(calender === selected && e.target !== act_inputs[i]){
+          if(is_checked){
+              act_inputs[i].disabled = true;
+              act_inputs[i].parentElement.style.color = "#252a2b";
+          } else {
+              act_inputs[i].disabled = false;
+              act_inputs[i].parentElement.style.color = "inherit";
+          }
+      }
+  }
+  if(activity_selected()){
+      activities.firstElementChild.style.color = "white";
+      activities_message.remove();
+  }
+});
+
+/*The Event Listener for the 'Payment Info'. This listens for what payment option ois chosen,
+then only shows the appropriate payment info necessary. */
+
+payment_menu.addEventListener('change', (e) => {
+  document.getElementById("payment").firstElementChild.hidden = true;
+  if(e.target.value === "credit card"){
+      credit.style.display = "block";
+      pay_pal.style.display = "none";
+      bitcoin.style.display = "none";
+  } else if(e.target.value === "paypal"){
+      credit.style.display = "none";
+      pay_pal.style.display = "block";
+      bitcoin.style.display = "none";
+  } else if(e.target.value === "bitcoin"){
+      credit.style.display = "none";
+      pay_pal.style.display = "none";
+      bitcoin.style.display = "block";
+  }
+});
 
 /* Name Field: These functions check to see if the text field that is provided is left blank,
 a message is displayed or the field border changes to red, once complete it changes to green.*/
