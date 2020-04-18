@@ -26,6 +26,7 @@ and Bitcoin messages.*/
 document.querySelectorAll("#payment option").selected=true;
 document.querySelectorAll("#paypal").hidden=true;
 document.querySelectorAll("#bitcoin").hidden=true;
+payment_menu.value = 'credit card';
 
 
 //Sets focus to the first text field once the webpage is open
